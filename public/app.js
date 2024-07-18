@@ -1,34 +1,5 @@
 document.addEventListener("DOMContentLoaded", (event) => {
   const app = firebase.app();
-
-  const db = firebase.firestore();
-
-  // const myPost = db.collection("posts").doc("firstpost");
-
-  // myPost.get().then((doc) => {
-  //   const data = doc.data();
-  //   document.write(data.title + `<br>`);
-  //   document.write(data.createdAt);
-  // });
-
-  // myPost.onSnapshot((doc) => {
-  //   const data = doc.data();
-  //   document.querySelector("#title").innerHTML = data.title;
-  // });
-
-  // const productsRef = db.collection("products");
-  // const query = productsRef.where("price", "==", 1);
-  // const query = productsRef.orderBy("price", "desc").limit(1);
-  // query
-  //   .get()
-  //   .then((products) => {
-  //     products.forEach((doc) => {
-  //       data = doc.data();
-  //       document.write(`${data.name} at ${data.price}`);
-  //       console.log({ doc });
-  //     });
-  //   })
-  //   .catch(console.log);
 });
 
 function uploadFile(files) {
@@ -39,11 +10,20 @@ function uploadFile(files) {
 
   const task = horseRef.put(file);
 
-  task.then((snapshot) => {
-    console.log(snapshot);
-    const url = snapshot.downloadURL;
-    document.querySelector("#imgUpload").setAttribute("src", url);
-  });
+  task
+    .then((snapshot) => {
+      snapshot.ref
+        .getDownloadURL()
+        .then((url) => {
+          document.querySelector("#imgUpload").setAttribute("src", url);
+        })
+        .catch((error) => {
+          console.log("Error getting download URL:", error);
+        });
+    })
+    .catch((error) => {
+      console.log("Error uploading file:", error);
+    });
 }
 
 function updatePost(e) {
